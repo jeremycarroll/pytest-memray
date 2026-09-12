@@ -1,0 +1,4 @@
+Add ``--memray-full`` and the Boolean ``memray_full`` setting to opt into full
+allocation captures for downstream reporters such as ``memray stats`` and temporal
+flame graphs. Aggregated captures remain the default. Full captures use more disk
+space and may add runtime overhead.
