@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "symphony-repository/v1",
+  "linear": {"teamKey": "100"},
+  "workingDirectory": ".",
+  "instructions": ["SYMPHONY.md"],
+  "commands": {
+    "build": [["bash", "-lc", "pipx run build[virtualenv] --sdist --wheel"]],
+    "test": [["bash", "-lc", "docker compose run --rm test tox"]]
+  },
+  "ci": {
+    "requiredChecks": [
+      {
+        "name": "Source and wheel distributions",
+        "workflow": ".github/workflows/build_dist.yml",
+        "appId": 15368
+      },
+      {
+        "name": "check docs",
+        "workflow": ".github/workflows/build.yml",
+        "appId": 15368
+      },
+      {
+        "name": "lint",
+        "workflow": ".github/workflows/build.yml",
+        "appId": 15368
+      },
+      {
+        "name": "test py38",
+        "workflow": ".github/workflows/build.yml",
+        "appId": 15368
+      },
+      {
+        "name": "test py39",
+        "workflow": ".github/workflows/build.yml",
+        "appId": 15368
+      },
+      {
+        "name": "test py310",
+        "workflow": ".github/workflows/build.yml",
+        "appId": 15368
+      },
+      {
+        "name": "test py311",
+        "workflow": ".github/workflows/build.yml",
+        "appId": 15368
+      },
+      {
+        "name": "test py312",
+        "workflow": ".github/workflows/build.yml",
+        "appId": 15368
+      },
+      {
+        "name": "test py312-cov",
+        "workflow": ".github/workflows/build.yml",
+        "appId": 15368
+      },
+      {
+        "name": "test py313",
+        "workflow": ".github/workflows/build.yml",
+        "appId": 15368
+      },
+      {
+        "name": "test py314",
+        "workflow": ".github/workflows/build.yml",
+        "appId": 15368
+      },
+      {
+        "name": "test py315",
+        "workflow": ".github/workflows/build.yml",
+        "appId": 15368
+      }
+    ]
+  }
+}

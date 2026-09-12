@@ -1,0 +1,12 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 9ea60a1
+_src_path: gh:1000lines/symphony-client-template
+build_command: pipx run build[virtualenv] --sdist --wheel
+cadence_app_slug: hackcadence
+cadence_reviewer: codex
+default_branch: main
+linear_team_key: '100'
+repo_slug: jeremycarroll/pytest-memray
+symphony_app_slug: 1000lines-symphony[bot]
+test_command: docker compose run --rm test tox
+
