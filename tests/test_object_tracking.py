@@ -11,10 +11,11 @@ pytestmark = pytest.mark.skipif(
 )
 
 
+@pytest.mark.parametrize("full", [False, True], ids=["aggregated", "full"])
 class TestObjectTracking:
     """Test the limit_leaked_objects marker."""
 
-    def test_objects_are_tracked_and_reported(self, pytester):
+    def test_objects_are_tracked_and_reported(self, pytester, full):
         """Test that leaked objects are detected and reported."""
         pytester.makepyfile(
             """
@@ -31,7 +32,7 @@ class TestObjectTracking:
             """
         )
 
-        result = pytester.runpytest("--memray")
+        result = pytester.runpytest("--memray", *(["--memray-full"] if full else []))
 
         assert result.ret == pytest.ExitCode.TESTS_FAILED
         output = result.stdout.str()
@@ -43,7 +44,7 @@ class TestObjectTracking:
         assert "list" in output
         assert "dict" in output
 
-    def test_ignoring_some_leaked_objects(self, pytester):
+    def test_ignoring_some_leaked_objects(self, pytester, full):
         """Test that leaked objects can be ignored."""
         pytester.makepyfile(
             """
@@ -63,7 +64,7 @@ class TestObjectTracking:
             """
         )
 
-        result = pytester.runpytest("--memray")
+        result = pytester.runpytest("--memray", *(["--memray-full"] if full else []))
 
         assert result.ret == pytest.ExitCode.TESTS_FAILED
         output = result.stdout.str()
@@ -75,7 +76,7 @@ class TestObjectTracking:
         assert "list" in output
         assert "dict" not in output
 
-    def test_ignoring_all_leaked_objects(self, pytester):
+    def test_ignoring_all_leaked_objects(self, pytester, full):
         """Test that the test passes if all leaked objects are ignored."""
         pytester.makepyfile(
             """
@@ -92,7 +93,7 @@ class TestObjectTracking:
             """
         )
 
-        result = pytester.runpytest("--memray")
+        result = pytester.runpytest("--memray", *(["--memray-full"] if full else []))
 
         assert result.ret == 0
         output = result.stdout.str()
@@ -103,7 +104,7 @@ class TestObjectTracking:
         assert "list" not in output
         assert "dict" not in output
 
-    def test_no_frames_leak(self, pytester):
+    def test_no_frames_leak(self, pytester, full):
         """Test that when no user objects leak, no frames survive either."""
         pytester.makepyfile(
             """
@@ -125,12 +126,12 @@ class TestObjectTracking:
             """
         )
 
-        result = pytester.runpytest("--memray")
+        result = pytester.runpytest("--memray", *(["--memray-full"] if full else []))
         output = result.stdout.str()
         assert result.ret == 0
         assert "instance(s)" not in output
 
-    def test_complex_object_types(self, pytester):
+    def test_complex_object_types(self, pytester, full):
         """Test tracking of various object types."""
         pytester.makepyfile(
             """
@@ -158,7 +159,7 @@ class TestObjectTracking:
             """
         )
 
-        result = pytester.runpytest("--memray")
+        result = pytester.runpytest("--memray", *(["--memray-full"] if full else []))
 
         assert result.ret == pytest.ExitCode.TESTS_FAILED
         output = result.stdout.str()
@@ -166,7 +167,7 @@ class TestObjectTracking:
         assert "CustomClass" in output
         assert "dict" in output
 
-    def test_large_number_of_leaks(self, pytester):
+    def test_large_number_of_leaks(self, pytester, full):
         """Test with many leaked objects."""
         pytester.makepyfile(
             """
@@ -184,7 +185,7 @@ class TestObjectTracking:
             """
         )
 
-        result = pytester.runpytest("--memray")
+        result = pytester.runpytest("--memray", *(["--memray-full"] if full else []))
 
         assert result.ret == pytest.ExitCode.TESTS_FAILED
         output = result.stdout.str()
