@@ -1,5 +1,15 @@
 # Full-fidelity Memray captures: fan-out plan
 
+## FC-D presentation amendment — 2026-09-12
+
+Jeremy's [PR #10 review](https://github.com/jeremycarroll/pytest-memray/pull/10#pullrequestreview-5187981207)
+replaces the long preparation inventory with a concise upstream-style PR body on
+fork main and one pointer back to the fork's development history. Detailed audit
+evidence stays in the fork PR/workpad and immutable history. The contribution
+contains only the six product files; all Symphony template and working files are
+absent. This small FC-D amendment also updates the execution contract; product
+behavior, artifact ancestry, checks, certification ownership and DAG are unchanged.
+
 ## Delivery revision R2 — 100-107
 
 R2 was accepted in [PR #8](https://github.com/jeremycarroll/pytest-memray/pull/8)
@@ -399,14 +409,17 @@ nodes:
     summary: >-
       Publish the accepted six-file contribution on a clean branch based on
       observed Bloomberg main, with no unrelated fork history. Give Jeremy a
-      main-based preparation PR reviewing the exact exclusions, branch history,
-      product diff, reproducibility and checks before upstream submission.
-    scope: Direct artifact construction/publication and reviewable preparation/removal inventory; no upstream PR.
+      main-based preparation PR with a concise upstream-style body and one link
+      to fork history; retain exact audit evidence in that PR/workpad and history.
+    scope: Direct artifact construction/publication and concise upstream PR preparation; no upstream PR.
     creates:
       - docs/symphony-plans/full-captures-clean-branch.md
-    edits: []
+    edits:
+      - docs/symphony-plans/fan-out-plan-100-102-full-captures.md
+      - docs/symphony-plans/full-captures-execution-contract.md
     owned_files:
       - docs/symphony-plans/full-captures-clean-branch.md in the main-based task PR
+      - FC-D presentation requirements in this plan and the execution contract, per Jeremy's PR10 review
       - Only the six allowlisted product files in the separate external artifact, using the exact accepted patch
     owned_external_resources:
       - jeremycarroll/pytest-memray refs/heads/full-captures-upstream; sole FC-D writer until accepted handoff, Jeremy resource owner.
@@ -429,14 +442,14 @@ nodes:
       - Inventory every fork-only path/commit excluded using the exact snapshot and allowlist in the execution contract; retain upstream versions of modified working files such as zizmor.yml.
       - Create the separate branch directly from observed upstream main with one product-only commit under the actual author identity; no Jeremy signoff assertion unless actually supplied. Use the lifecycle recipe and fail closed on unexpected existing branch state.
       - Publish that branch to the fork and read back its SHA, parent, tree, six-file diff and full upstream-base..head history. No task PR targets it.
-      - Publish the main-based preparation record with immutable commit/compare links, exact base/source/head/tree/patch checksum, explicit removal-by-exclusion table and artifact CI. Jeremy reviews this record PR and the linked artifact diff.
+      - Inspect merged upstream PRs and prepare a comparably concise body on main with one fork PR history link. Keep immutable artifact links and unsigned status outside the proposed body; retain exact refs, checksum, exclusions and CI in the fork PR/workpad and immutable audit history.
       - Run artifact regression/lint/docs/build and full-vs-aggregated stats using the execution contract; record actual installed ref separately. Reuse unchanged minimum/object evidence only where its source and environment cover the claim.
       - Obtain all12 baseline current-head checks on both the task PR and published artifact; fresh Codex/hackcadence approval of the task head must explicitly cover the recorded artifact SHA and exclusions.
       - Freeze the accepted artifact SHA and record Jeremy's acceptance in the task record/workpad; transfer branch write ownership to FC-E only after FC-D Done and task PR merged to main.
     acceptance_checks:
       - Artifact base is observed Bloomberg main; one new product-only commit, exact six-file diff and no fork-only ancestry or working files added.
       - Expected unchanged-base patch SHA256/tree/count match the recorded baseline; any upstream advancement has an explicit new base/tree/diff and scoped validation, with conflicts paused if resolution would alter accepted behavior.
-      - Main-based task PR changes only the preparation record and preserves all historical evidence; links let a human review both the excluded material and resulting product/commit history.
+      - Main-based task PR contains the concise proposed body and this scoped plan/contract amendment. Historical audit evidence remains linked; all Symphony template and working files are absent from the artifact, and no internal inventories or handoff notes enter the upstream body.
       - Branch publication/readback, all12 artifact and task checks, current-head Cadence, closed feedback, clean/ready task PR, orange/symphony and jeremycarroll verified.
       - Actual unsigned/signed status is explicit; no upstream submission or project-completion claim. Accepted artifact mutation belongs next to FC-E.
     validation_commands:
@@ -447,7 +460,7 @@ nodes:
       - "Then Docker only for local environment gaps using Validation environment; otherwise Docker: skipped — passed locally."
       - "Then all12 Run/Build current-head checks from App15368 on task and artifact; record SHA/run/attempt/workflow and each child."
     delivery_notes:
-      - Estimate180-280 additions/0-20 deletions in record; artifact560 additions/39 deletions. Keep inventory, construction and review in one coherent node.
+      - Keep the proposed upstream body brief like accepted upstream PRs; replace the long current record with a history link. Artifact560 additions/39 deletions and detailed internal proof remain unchanged.
       - FC-C evidence stays immutable; FC-D owns new provenance. Jeremy owns the fork branch resource and acceptance. FC-E alone performs later signoff replacement and PR-number rename.
     exclusions:
       - No deletion of fork main history, product behavior changes, extra files in artifact, task PR against artifact/predecessor, copied fork commits, new planner/schema or shared process edits.

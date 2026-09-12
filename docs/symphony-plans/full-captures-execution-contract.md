@@ -182,13 +182,16 @@ product-only commit, never fork task/merge commits. FC-D may publish under the
 actual App author identity without claiming human DCO. If unsigned, it is a
 review artifact only until Jeremy certifies it in FC-E.
 
-FC-D's **main-based task PR** reviews the removal-by-exclusion inventory, exact
-patch, artifact parent/head/tree and all included commits. Include immutable
-`/commit/<observed-head>` and `/compare/<observed-base>...<observed-head>` links,
-GitHub branch link, file list/stat and artifact CI links. Record Jeremy's review
-of that exact artifact SHA, not just a floating branch. Cadence's task-head
-review must inspect the referenced artifact and evidence. The branch is not a
-Symphony task branch and receives no fork-main PR; all task PR bases stay main.
+Per Jeremy's [PR #10 review](https://github.com/jeremycarroll/pytest-memray/pull/10#pullrequestreview-5187981207),
+FC-D's **main-based task PR** prepares a concise upstream PR body, matching the
+granularity of merged upstream contributions, with one link back to the fork PR.
+The artifact contains only the accepted product change; no Symphony client
+template, working files, planning or handoff records accompany it. Keep the
+exclusion inventory, exact refs/checksum and individual CI jobs in the fork
+PR/workpad and immutable history. The short preparation document retains the
+artifact commit/compare links and actual unsigned status outside the proposed body.
+Record Jeremy's review of that exact artifact SHA. Cadence must inspect it and
+the linked evidence. All task PR bases stay main; no PR targets the artifact.
 
 After D acceptance/Done/main merge, FC-E compares the remote to the accepted SHA
 before mutation. A genuine certification replacement changes the SHA even with
@@ -381,8 +384,9 @@ create no duplicate upstream issue. Template sections are issue number,
 **Describe your changes**, **Testing performed**, **Additional context**.
 FC-E prepares `upstream-pr.md` outside the artifact's tracked tree with those
 sections, issue `#160`, unchanged public contract, exact tested/version evidence,
-limitations and check links. Adapt FC-C's proposed body to this observed template;
-its old generic Summary/Validation headings are historical preparation only.
+limitations and check links. Use FC-D's concise proposed body and refresh its
+testing evidence for the final submitted head. Its single fork PR link retains
+development history; internal inventories and handoff notes stay in the fork.
 Title: **Add opt-in full allocation captures**. No automatic closing keyword.
 
 Before upstream create, Jeremy reads the actual contribution and DCO, confirms
