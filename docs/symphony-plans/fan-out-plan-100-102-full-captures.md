@@ -2,6 +2,15 @@
 
 ## Delivery revision R2 — 100-107
 
+R2 was accepted in [PR #8](https://github.com/jeremycarroll/pytest-memray/pull/8)
+at `4ad23afc66c5a82ed959cd939e7b4e06af1f67d6` and merged to main as
+`2acb32b6b1afa4c17770263e103c73dc893f84f9` on 2026-09-12.
+[100-108](https://linear.app/1000lines/issue/100-108) created FC-D/100-113 and
+FC-E/100-114, verified their complete bodies and direct relations, then activated
+both. See the [dated R2 mapping](./fan-out-100-103-mapping.md#r2-delivery-fan-out--2026-09-12).
+The proposal context below records the review stage; the accepted topology and
+commissioning keys remain unchanged.
+
 Proposed for review after Jeremy accepted [PR #7](https://github.com/jeremycarroll/pytest-memray/pull/7)
 at head `9d66e4975ef3406b67db46fba9048e3ded186a62`, merged to main as
 `4b47fd033ac826a9bb28ba8c64cd8d9de7bd1029` on 2026-09-12. His
@@ -19,13 +28,13 @@ tickets or delivery branch. After its acceptance/merge,
 FC-D and FC-E. Existing FC-A/100-104, FC-B/100-105 and FC-C/100-106 remain Done;
 100-101 through 100-105 retain their identities and accepted work.
 
-| Item               | Outcome and owned files                                                                                 | Estimated additions / deletions                                  | Difficulty |
-| ------------------ | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------- |
-| FC-A / 100-104     | Accepted configuration, Tracker selection and regression/reporter tests; plugin.py and two test modules | Historical 300–550 / 15–45                                       | hard       |
-| FC-B / 100-105     | Accepted user instructions and provisional feature note; README/configuration/news                      | Historical 80–140 / 0–10                                         | easy       |
-| FC-C / 100-106     | Accepted combined validation, cleanup audit and reproducible patch baseline                             | Historical 100–200 / 0–30, record only                           | hard       |
-| FC-D / not created | Publish and review the clean branch; one main-based preparation record                                  | 180–280 / 0–20 in task PR; separate artifact 560 / 39            | hard       |
-| FC-E / not created | Certify, submit upstream and rename observed-number fragment; one submission record plus exact rename   | 120–220 / 0–10 in task PR; artifact metadata rewrite plus rename | hard       |
+| Item           | Outcome and owned files                                                                                 | Estimated additions / deletions                                  | Difficulty |
+| -------------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------- |
+| FC-A / 100-104 | Accepted configuration, Tracker selection and regression/reporter tests; plugin.py and two test modules | Historical 300–550 / 15–45                                       | hard       |
+| FC-B / 100-105 | Accepted user instructions and provisional feature note; README/configuration/news                      | Historical 80–140 / 0–10                                         | easy       |
+| FC-C / 100-106 | Accepted combined validation, cleanup audit and reproducible patch baseline                             | Historical 100–200 / 0–30, record only                           | hard       |
+| FC-D / 100-113 | Publish and review the clean branch; one main-based preparation record                                  | 180–280 / 0–20 in task PR; separate artifact 560 / 39            | hard       |
+| FC-E / 100-114 | Certify, submit upstream and rename observed-number fragment; one submission record plus exact rename   | 120–220 / 0–10 in task PR; artifact metadata rewrite plus rename | hard       |
 
 Five meaningful implementation nodes, four hard edges, **four total dependency
 rounds; two remaining delivery rounds**. Planning/fan-out seed chain
@@ -96,8 +105,8 @@ flowchart LR
   FC_A["100-104: Round 1: opt-in format selection and complete capture regression tests"]
   FC_B["100-105: Round 1: CLI and ini documentation, reporter example and feature note"]
   FC_C["100-106: Round 2: accepted combined validation and six-file patch baseline"]
-  FC_D["FC-D: Round 3: publish clean upstream-based branch and review exclusions; no ticket yet"]
-  FC_E["FC-E: Round 4: real DCO, upstream PR and observed-number news rename; no ticket yet"]
+  FC_D["100-113: Round 3: publish clean upstream-based branch and review exclusions"]
+  FC_E["100-114: Round 4: real DCO, upstream PR and observed-number news rename"]
   FC_A --> FC_C
   FC_B --> FC_C
   FC_C --> FC_D
