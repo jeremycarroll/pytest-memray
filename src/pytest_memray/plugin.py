@@ -132,10 +132,11 @@ class Result:
 
 
 class Manager:
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config, file_format: FileFormat) -> None:
         self.results: dict[str, Result] = {}
         self.surviving_objects: dict[str, list[object]] = {}  # Store separately
         self.config = config
+        self.file_format = file_format
         path: Path | None = config.getvalue("memray_bin_path")
         self._tmp_dir: None | TemporaryDirectory[str] = None
         if path is None:
@@ -238,7 +239,7 @@ class Manager:
             tracker_kwargs = {
                 "native_traces": native,
                 "trace_python_allocators": trace_python_allocators,
-                "file_format": FileFormat.AGGREGATED_ALLOCATIONS,
+                "file_format": self.file_format,
             }
 
             # Add track_object_lifetimes if tracking objects
@@ -449,6 +450,12 @@ def pytest_addoption(parser: Parser) -> None:
         help="Activate memray tracking",
     )
     group.addoption(
+        "--memray-full",
+        action="store_true",
+        default=None,
+        help="Capture all allocations instead of aggregating (larger files and potentially slower runs)",
+    )
+    group.addoption(
         "--memray-bin-path",
         action=WriteEnabledDirectoryAction,
         default=None,
@@ -499,6 +506,12 @@ def pytest_addoption(parser: Parser) -> None:
 
     parser.addini("memray", "Activate pytest.ini setting", type="bool")
     parser.addini(
+        "memray_full",
+        "Capture all allocations instead of aggregating",
+        type="bool",
+        default=False,
+    )
+    parser.addini(
         "hide_memray_summary",
         "Hide the memray summary at the end of the execution",
         type="bool",
@@ -540,7 +553,18 @@ def pytest_addoption(parser: Parser) -> None:
 
 
 def pytest_configure(config: Config) -> None:
-    pytest_memray = Manager(config)
+    # Validate even if the CLI flag wins or tracking is inactive. value_or_ini
+    # suppresses invalid ini values, and Manager construction creates directories.
+    try:
+        config.getini("memray_full")
+    except ValueError as exc:
+        raise UsageError(f"Invalid memray_full: {exc}") from exc
+    file_format = (
+        FileFormat.ALL_ALLOCATIONS
+        if value_or_ini(config, "memray_full")
+        else FileFormat.AGGREGATED_ALLOCATIONS
+    )
+    pytest_memray = Manager(config, file_format)
     config.pluginmanager.register(pytest_memray, "memray_manager")
 
     for marker, marker_fn in MARKERS.items():
