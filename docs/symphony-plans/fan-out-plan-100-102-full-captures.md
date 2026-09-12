@@ -64,9 +64,9 @@ along the longest hard path; they do not predict worker capacity or elapsed time
 ```mermaid
 %% symphony-dag/v1
 flowchart LR
-  FC_A["Round 1: opt-in format selection and complete capture regression tests"]
-  FC_B["Round 1: CLI and ini documentation, reporter example and feature note"]
-  FC_C["Round 2: validate combined main, clean up and deliver upstream handoff"]
+  FC_A["100-104: Round 1: opt-in format selection and complete capture regression tests"]
+  FC_B["100-105: Round 1: CLI and ini documentation, reporter example and feature note"]
+  FC_C["100-106: Round 2: validate combined main, clean up and deliver upstream handoff"]
   FC_A --> FC_C
   FC_B --> FC_C
 ```
@@ -76,6 +76,8 @@ The standalone graph is
 Neither edge is redundant: FC-C requires the implemented behavior and the
 documentation/release-note result independently. FC-C performs delivery work;
 it is not a no-op join.
+
+Fan-out: [verified issue and branch mapping](./fan-out-100-103-mapping.md).
 
 ## Execution, source and validation contract
 
