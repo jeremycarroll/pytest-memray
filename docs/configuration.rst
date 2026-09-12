@@ -97,6 +97,9 @@ file or assume a generated filename prefix:
 
    python -m memray stats CAPTURE.bin
 
+The stats command has been verified with Memray 1.19.1 and 1.20.0 using
+plugin-produced full captures.
+
 The stats reporter needs full allocation data; it cannot compute statistics from
 an aggregated capture. Both formats use ``.bin`` filenames, so the extension
 does not identify the format. Use a separate output directory for each run when

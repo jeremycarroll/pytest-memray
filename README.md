@@ -138,6 +138,9 @@ listed files. Replace `CAPTURE.bin` with that path, rather than a metadata file:
 python -m memray stats CAPTURE.bin
 ```
 
+The stats command has been verified with Memray 1.19.1 and 1.20.0 using
+plugin-produced full captures.
+
 Alternatively, enable full captures in `pytest.ini`:
 
 ```ini
