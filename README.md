@@ -87,6 +87,8 @@ MEMORY PROBLEMS demo/test_ok.py::test_memory_exceed
 ## Configuration - CLI flags
 
 - `--memray` - activate memray tracking
+- `--memray-full` - use full allocation captures instead of the aggregated default;
+  larger files and potential runtime overhead; does not activate tracking
 - `--most-allocations=MOST_ALLOCATIONS` - show the N tests that allocate most memory
   (N=0 for all)
 - `--hide-memray-summary` - hide the memray summary at the end of the execution
@@ -103,6 +105,8 @@ MEMORY PROBLEMS demo/test_ok.py::test_memory_exceed
 ## Configuration - INI
 
 - `memray(bool)` - activate memray tracking
+- `memray_full(bool)` - use full allocation captures (default: false/aggregated);
+  `--memray-full` takes precedence; does not activate tracking
 - `most-allocations(string)` - show the N tests that allocate most memory (N=0 for all)
 - `hide_memray_summary(bool)` - hide the memray summary at the end of the execution
 - `stacks(int)` - Show the N stack entries when showing tracebacks of memory allocations
@@ -110,6 +114,66 @@ MEMORY PROBLEMS demo/test_ok.py::test_memory_exceed
 - `trace_python_allocators(bool)` - Record allocations made by the Pymalloc allocator (will be slower)
 - `fail-on-increase(bool)` - Fail a test with the `limit_memory` marker if it
   uses more memory than its last successful run
+
+## Full captures for downstream reports
+
+By default, pytest-memray writes aggregated captures to reduce disk usage. Opt into
+full captures when you need individual allocation records for
+[Memray statistics](https://bloomberg.github.io/memray/stats.html) or
+[temporal flame graphs](https://bloomberg.github.io/memray/flamegraph.html#temporal-flame-graphs).
+Full captures are larger and may add runtime overhead.
+
+Enable tracking and retain the captures for later analysis:
+
+```shell
+python -m pytest --memray --memray-full --native --trace-python-allocators \
+  --memray-bin-path .memray tests/
+find .memray -type f -name '*.bin'
+```
+
+After pytest exits, choose the `.bin` for the test you want to inspect from the
+listed files. Replace `CAPTURE.bin` with that path, rather than a metadata file:
+
+```shell
+python -m memray stats CAPTURE.bin
+```
+
+The stats command has been verified with Memray 1.19.1 and 1.20.0 using
+plugin-produced full captures.
+
+Alternatively, enable full captures in `pytest.ini`:
+
+```ini
+[pytest]
+memray_full = true
+```
+
+Or in `pyproject.toml`:
+
+```toml
+[tool.pytest.ini_options]
+memray_full = true
+```
+
+For either configuration, run `python -m pytest --memray --memray-bin-path .memray tests/`.
+The `--memray-full` flag takes no value and overrides a false ini setting; repeated
+flags are harmless. To return to aggregated captures for one run, omit
+`--memray-full` and add `-o memray_full=false`. An attached value such as
+`--memray-full=false` is a usage error. Invalid `memray_full` Boolean values are
+rejected before capture setup, even without tracking or when the flag is present.
+
+Full mode alone does not activate tracking; existing activation by `--memray` or
+markers still applies. Use `--memray-bin-path` to keep files after pytest exits;
+without it, the usual temporary-file lifetime is unchanged in either format.
+Both formats use `.bin` filenames. Full mode does not enable `--native` or
+`--trace-python-allocators`; choose those options independently as needed.
+
+The plugin keeps its existing whole-test tracking window. Full captures do not
+isolate a function or make every function appear in a peak-memory flame graph.
+For a subsection of a test, use an application-level `memray.Tracker` around that
+code and run it without plugin tracking. See the
+[configuration guide](https://pytest-memray.readthedocs.io/en/latest/configuration.html)
+for more detail.
 
 ## License
 
