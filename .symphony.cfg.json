@@ -68,11 +68,6 @@
         "name": "test py315",
         "workflow": ".github/workflows/build.yml",
         "appId": 15368
-      },
-      {
-        "name": "Run zizmor 🌈",
-        "workflow": ".github/workflows/zizmor.yml",
-        "appId": 15368
       }
     ]
   }
