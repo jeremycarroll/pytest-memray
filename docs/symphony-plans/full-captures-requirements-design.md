@@ -323,10 +323,6 @@ installed guidance govern this issue; no product conclusion depends on that
 historical snapshot. Reproducing that exact setup would require Jeremy to
 provide it and is outside this project's product requirements.
 
-GitHub author App binding failed with HTTP 404 during this turn. Public source
-access succeeded. E5 gates publication, CI and review evidence; it does not
-change the design or constitute upstream maintainer approval.
-
 ## Consumption by plan-project
 
 [100-102][plan-ticket] should use the accepted revision of this file as its
