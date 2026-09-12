@@ -1,5 +1,32 @@
 # Full-fidelity Memray captures: fan-out plan
 
+## Delivery amendment — 2026-09-12
+
+Jeremy's [PR #7 review](https://github.com/jeremycarroll/pytest-memray/pull/7#pullrequestreview-5187653118)
+extends delivery beyond the original patch-only handoff: provide a clean
+contribution branch, reviewable preparation/removal work and a subsequent
+upstream PR. This changes the project endpoint in decision 8 below; the
+accepted product design, FC-A/FC-B results and FC-C validation remain inputs.
+
+Following the existing [replanning guide](../engineering/symphony/replanning.md),
+[100-107](https://linear.app/1000lines/issue/100-107) revises the delivery plan
+after 100-106 is accepted and PR #7 merges.
+[100-108](https://linear.app/1000lines/issue/100-108) applies that reviewed
+revision. The verified hard seed chain is `100-106 → 100-107 → 100-108`;
+these planning seeds are outside the original implementation manifest below.
+That manifest and its standalone graph retain the accepted three-node baseline.
+100-107 owns the revised graph, implementation ownership and exact downstream
+relations; 100-108 creates the reviewed implementation tickets.
+
+Use the [delivery record](./full-captures-delivery.md)'s six-file patch to
+prepare a separate upstream-based contribution artifact. Preserve fork main's
+planning history and normal main-based task PRs. The replan must define the
+artifact's review surface and subsequent submission/fragment-rename owner.
+Real DCO certification and verified permission still gate actual submission;
+no upstream merge, issue closure, release or deployment is authorized.
+
+## Original accepted baseline
+
 Proposed for human review by [100-102][planning-ticket]. This plan delivers an
 explicit full-capture opt-in for allocation-level analysis while preserving
 aggregated captures by default. It implements the accepted
