@@ -2,9 +2,42 @@
 
 Combined implementation and documentation validation for [100-106][finalizer],
 under the accepted [plan][plan] and [design][design]. The product-only upstream
-package is prepared below; Jeremy owns its signoff and submission. The final
-fork review is [PR #7][pr-c], targeting **main**. No deployment or package release
+package is prepared below; Jeremy owns its signoff and submission. The combined
+validation review is [PR #7][pr-c], targeting **main**. No deployment or package release
 is required.
+
+## Human-directed delivery follow-up
+
+Jeremy's [review on 2026-09-12][delivery-review] requests an actual clean delivery
+branch and a later upstream PR. His repository admin permission was verified.
+This supersedes the earlier patch-only handoff as the project's endpoint.
+The combined validation and patch below remain the baseline for that work;
+this record does not claim that a delivery branch or upstream PR was published.
+
+The existing [replanning guide](../engineering/symphony/replanning.md) routes
+these additional work steps and ownership boundaries through two seeds:
+
+- [100-107: replan clean delivery and upstream contribution][replan] follows
+  acceptance of 100-106 and merge of PR #7. It defines the delivery branch,
+  reviewable preparation/removal work, and subsequent upstream submission.
+- [100-108: apply the delivery replan][fanout] follows acceptance and merge of
+  that plan and creates only its reviewed implementation tickets.
+
+Both seeds are assigned to Jeremy and labeled orange. The hard relations
+`100-106 → 100-107 → 100-108` were read back in both directions; both seeds
+are Active with unfinished dependencies gating dispatch. The existing
+three-node implementation graph remains the accepted baseline until replanning.
+
+The delivery branch should start from observed upstream main and contain the
+six-file product patch. This excludes working files and unrelated commit history
+without deleting historical planning/onboarding evidence from fork main.
+The replan must define the branch's owner and review surface while retaining
+main-based Symphony task PRs; the submission branch is a separate artifact.
+Actual upstream submission and the observed-number fragment rename remain
+future work, with real DCO certification and verified permission required.
+The patch instructions below are inputs for those tickets, not a replacement
+for their execution. Human acceptance of this baseline does not complete the
+expanded project delivery.
 
 ## Accepted refs and provenance
 
@@ -21,13 +54,13 @@ FC-C originally branched from main `c09c1c2`; this combined audit starts from
 fetched main **`4b142113925fb9fd21cc5012e395fa2eebaef28f`**. Both accepted heads
 are verified ancestors. Merging main into the existing task branch produced
 **`0b2d99061f49ad125e84577780b01a3a4edcf3e3`**, without conflicts. All six product
-files match combined main byte for byte. FC-C changes only this delivery record;
+files match combined main byte for byte. FC-C changes only delivery/planning records;
 product correction and cleanup commits: **none**.
 
 The actual installed/tested revision is `0b2d99061f49ad125e84577780b01a3a4edcf3e3`:
 editable pytest-memray `0.1.dev158+g0b2d99061`, resolving to this workspace's
 `src/pytest_memray`. Python **3.9.25**, pytest **8.4.2**, Memray **1.20.0**.
-Later delivery-record commits have separate published-head CI/review provenance
+Later documentation commits have separate published-head CI/review provenance
 in [PR #7][pr-c] and the pinned [FC-C workpad][proof-c]; they do not change the
 executed product source or retroactively change the installed version.
 
@@ -177,8 +210,10 @@ obtained. [Upstream contribution instructions][contributing] require real-name
 signoff on every commit under the [DCO][dco]. Source commits are App-authored,
 without Jeremy's certification. This blocks only actual submission.
 
-After fork PR #7 reaches its CI/Cadence/ready gate, Jeremy must review the patch,
-confirm his right to contribute under the DCO, and use his authorized account:
+The follow-up tickets will carry these concrete submission steps forward after
+fork PR #7 is accepted and the revised delivery plan is applied. Jeremy must
+review the patch, confirm his right to contribute under the DCO, and use his
+authorized account:
 
 1. Fetch upstream main and verify its SHA. If it has advanced, record the new
    base, reapply the six-file patch and rerun affected checks. Do not silently
@@ -245,6 +280,9 @@ issue closure, tagging, PyPI publication and hosted deployment are excluded.
 Jeremy owns final project acceptance and any later upstream follow-up.
 
 [finalizer]: https://linear.app/1000lines/issue/100-106
+[delivery-review]: https://github.com/jeremycarroll/pytest-memray/pull/7#pullrequestreview-5187653118
+[replan]: https://linear.app/1000lines/issue/100-107
+[fanout]: https://linear.app/1000lines/issue/100-108
 [plan]: https://github.com/jeremycarroll/pytest-memray/blob/d403161792521f57d9a633c09b99c9d07fd5c1a2/docs/symphony-plans/fan-out-plan-100-102-full-captures.md
 [design]: https://github.com/jeremycarroll/pytest-memray/blob/d403161792521f57d9a633c09b99c9d07fd5c1a2/docs/symphony-plans/full-captures-requirements-design.md
 [pr-a]: https://github.com/jeremycarroll/pytest-memray/pull/6
