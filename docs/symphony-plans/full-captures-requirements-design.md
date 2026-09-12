@@ -18,6 +18,21 @@ Acceptance of this document locks the decisions below for [100-102][plan-ticket]
 It specifies the product contract and verification obligations; it does not
 create an implementation plan, DAG, implementation tickets, or software changes.
 
+## Accepted delivery amendment — R2
+
+Jeremy's [PR7 review](https://github.com/jeremycarroll/pytest-memray/pull/7#pullrequestreview-5187653118)
+and accepted PR7/main `4b47fd033ac826a9bb28ba8c64cd8d9de7bd1029` extend R7/D8/AC8
+and E4/E6: actual clean branch publication/review, followed by real certified
+upstream submission and observed-number fragment rename. The [R2 plan](./fan-out-plan-100-102-full-captures.md)
+assigns FC-D preparation and FC-E submission, preserving completed FC-C evidence.
+The original submission-or-handoff wording below describes that historical
+baseline; a package alone no longer completes expanded delivery. Missing DCO or
+permission pauses only dependent writes and requires an exact Jeremy handoff;
+it does not prove actual submission. Product R1–R6/D1–D7/AC1–AC7 remain accepted.
+Every Symphony task branch/PR still starts from/targets fork main; the clean
+upstream-based branch is a separately owned submission artifact. No merge,
+closure, release, deployment or fabricated signoff is authorized.
+
 ## Goal and user workflow
 
 Let users explicitly request non-aggregated Memray captures for allocation-level

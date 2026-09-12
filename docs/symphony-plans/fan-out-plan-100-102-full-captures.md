@@ -1,66 +1,53 @@
 # Full-fidelity Memray captures: fan-out plan
 
-## Delivery amendment — 2026-09-12
+## Delivery revision R2 — 100-107
 
-Jeremy's [PR #7 review](https://github.com/jeremycarroll/pytest-memray/pull/7#pullrequestreview-5187653118)
-extends delivery beyond the original patch-only handoff: provide a clean
-contribution branch, reviewable preparation/removal work and a subsequent
-upstream PR. This changes the project endpoint in decision 8 below; the
-accepted product design, FC-A/FC-B results and FC-C validation remain inputs.
+Proposed for review after Jeremy accepted [PR #7](https://github.com/jeremycarroll/pytest-memray/pull/7)
+at head `9d66e4975ef3406b67db46fba9048e3ded186a62`, merged to main as
+`4b47fd033ac826a9bb28ba8c64cd8d9de7bd1029` on 2026-09-12. His
+[review 5187653118](https://github.com/jeremycarroll/pytest-memray/pull/7#pullrequestreview-5187653118)
+requires a clean contribution branch, reviewable preparation/removal and a later
+upstream PR. His repository admin authority was reverified. This supersedes the
+patch-only project endpoint, without reopening accepted product work.
 
-Following the existing [replanning guide](../engineering/symphony/replanning.md),
-[100-107](https://linear.app/1000lines/issue/100-107) revises the delivery plan
-after 100-106 is accepted and PR #7 merges.
-[100-108](https://linear.app/1000lines/issue/100-108) applies that reviewed
-revision. The verified hard seed chain is `100-106 → 100-107 → 100-108`;
-these planning seeds are outside the original implementation manifest below.
-That manifest and its standalone graph retain the accepted three-node baseline.
-100-107 owns the revised graph, implementation ownership and exact downstream
-relations; 100-108 creates the reviewed implementation tickets.
+The [original accepted plan at d403161](https://github.com/jeremycarroll/pytest-memray/blob/d403161792521f57d9a633c09b99c9d07fd5c1a2/docs/symphony-plans/fan-out-plan-100-102-full-captures.md)
+and [merged delivery record](https://github.com/jeremycarroll/pytest-memray/blob/4b47fd033ac826a9bb28ba8c64cd8d9de7bd1029/docs/symphony-plans/full-captures-delivery.md)
+remain historical evidence. This revision changes delivery ownership only.
+[100-107](https://linear.app/1000lines/issue/100-107) creates no implementation
+tickets or delivery branch. After its acceptance/merge,
+[100-108](https://linear.app/1000lines/issue/100-108) applies R2 and creates only
+FC-D and FC-E. Existing FC-A/100-104, FC-B/100-105 and FC-C/100-106 remain Done;
+100-101 through 100-105 retain their identities and accepted work.
 
-Use the [delivery record](./full-captures-delivery.md)'s six-file patch to
-prepare a separate upstream-based contribution artifact. Preserve fork main's
-planning history and normal main-based task PRs. The replan must define the
-artifact's review surface and subsequent submission/fragment-rename owner.
-Real DCO certification and verified permission still gate actual submission;
-no upstream merge, issue closure, release or deployment is authorized.
+| Item               | Outcome and owned files                                                                                 | Estimated additions / deletions                                  | Difficulty |
+| ------------------ | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------- |
+| FC-A / 100-104     | Accepted configuration, Tracker selection and regression/reporter tests; plugin.py and two test modules | Historical 300–550 / 15–45                                       | hard       |
+| FC-B / 100-105     | Accepted user instructions and provisional feature note; README/configuration/news                      | Historical 80–140 / 0–10                                         | easy       |
+| FC-C / 100-106     | Accepted combined validation, cleanup audit and reproducible patch baseline                             | Historical 100–200 / 0–30, record only                           | hard       |
+| FC-D / not created | Publish and review the clean branch; one main-based preparation record                                  | 180–280 / 0–20 in task PR; separate artifact 560 / 39            | hard       |
+| FC-E / not created | Certify, submit upstream and rename observed-number fragment; one submission record plus exact rename   | 120–220 / 0–10 in task PR; artifact metadata rewrite plus rename | hard       |
 
-## Original accepted baseline
-
-Proposed for human review by [100-102][planning-ticket]. This plan delivers an
-explicit full-capture opt-in for allocation-level analysis while preserving
-aggregated captures by default. It implements the accepted
-[requirements and design][design], merged through [fork PR #2][design-pr].
-This planning PR creates no implementation issues or product changes.
-
-| Item | Outcome and owned files                                                                                                                            | Estimated additions / deletions                    | Difficulty |
-| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | ---------- |
-| FC-A | Configuration, Tracker selection and regression/reporter tests; plugin.py and two existing test files                                              | 300–550 / 15–45                                    | hard       |
-| FC-B | User instructions and feature note; README.md, configuration.rst and one news fragment                                                             | 80–140 / 0–10                                      | easy       |
-| FC-C | Combined validation, scoped cleanup and upstream submission/handoff record; one delivery document, with explicitly ordered correction rights below | 100–200 / 0–30, plus only demonstrated corrections | hard       |
-
-Three meaningful nodes, two hard edges, **two minimum dependency rounds**.
-Estimates are review-size guidance, not quotas. FC-A's main uncertainty is
-testing both file formats with existing marker and interpreter behavior, not
-the small format-selection change. No artificial runtime seam is needed.
+Five meaningful implementation nodes, four hard edges, **four total dependency
+rounds; two remaining delivery rounds**. Planning/fan-out seed chain
+`100-106 → 100-107 → 100-108` gates commissioning separately and is not recreated
+as implementation payloads. Estimates are review-size guidance, not quotas.
 
 ## Metadata and baseline
 
 - `project_code`: full-captures; `project_color`: orange.
 - `repository`: jeremycarroll/pytest-memray; `base_branch`: main.
-- `seed_issue`: 100-102; `target_project`: Full-fidelity Memray captures
+- `seed_issue`: 100-107 (revision of 100-102); `target_project`: Full-fidelity Memray captures
   (`13af5f34-7e77-4b32-863f-97ded4ea9b16`); Linear team 100
   (`2d7d1d7e-47ff-45d2-8097-19307ad5a589`).
 - `human_lead`: Jeremy Carroll, Linear `c65b9fbe-e740-47e9-b444-3172d3526ff2`,
   GitHub `jeremycarroll`. Assign each new issue and fork PR to this lead.
 - `linear_issue_labels`: [orange]; `github_pr_labels`: [orange, symphony].
   Difficulty is a field, not an additional label. Do not initially set mature.
-- `baseline_context`: main at `09d23352e875d3981117a80ba25632d377187c2c`,
-  read 2026-09-12. Design PR #2 merged at this SHA; 100-101 is Done.
-  Its historical `status: proposed` front matter does not undo acceptance.
-- Reuse [100-103][fanout-ticket] for ticket creation after this plan is accepted.
-  The project contains only seeds 100-101, 100-102 and 100-103; no implementation
-  or finalizer issue exists to reuse. Do not replace or duplicate these seeds.
+- `baseline_context`: main at `4b47fd033ac826a9bb28ba8c64cd8d9de7bd1029`,
+  read 2026-09-12. Product design PR #2 and plan PR #3 remain accepted.
+- Reuse 100-108 for this fan-out. Bind existing node UUIDs below; never regenerate
+  their issue bodies or reopen Done work. Read back the project issue set before
+  creating FC-D/FC-E, reusing any confirmed IDs from an earlier attempt.
 - `known_open_decisions`: none. Preserve design R1–R7 and D1–D8. Runtime versions,
   emitted paths, future PR numbers, App/check IDs and signoff permission are
   owned execution inputs, not reasons to defer independent work.
@@ -83,8 +70,23 @@ the small format-selection change. No artificial runtime seam is needed.
    FC-C needs both accepted results on main to audit the combined deliverable
    and take over correction rights, so its two incoming edges are hard.
 
-The diagram shows hard dispatch dependencies only. The two rounds count nodes
-along the longest hard path; they do not predict worker capacity or elapsed time.
+For this revision, combining preparation and submission would tie review of a
+reproducible clean artifact to missing human certification. Splitting inventory,
+construction and removal into separate tasks would add repeated ownership of the
+same branch without a separate useful outcome. **Choose one preparation/review
+node FC-D, then one submission/fragment node FC-E.** Both mutate the same external
+branch sequentially; FC-E also needs the actual PR number before the rename.
+Direct construction from upstream plus the six-file patch omits both working
+files and unrelated commits. Copying fork main then deleting files would retain
+22 fork-only commits at this snapshot, including onboarding and plan history.
+It would also require reviewing deletions that direct construction makes
+unnecessary. The main-based FC-D record PR reviews the exclusions, exact artifact
+commit/tree and comparison; it does not delete evidence from main or target the
+artifact branch. The artifact remains separately inspectable by Jeremy.
+
+The diagram shows hard implementation dependencies only. Rounds count nodes
+along the longest path, not elapsed time or worker capacity. A/B's historic
+parallel boundary remains intact; no new product implementation is commissioned.
 
 ## DAG
 
@@ -93,16 +95,20 @@ along the longest hard path; they do not predict worker capacity or elapsed time
 flowchart LR
   FC_A["100-104: Round 1: opt-in format selection and complete capture regression tests"]
   FC_B["100-105: Round 1: CLI and ini documentation, reporter example and feature note"]
-  FC_C["100-106: Round 2: validate combined main, clean up and deliver upstream handoff"]
+  FC_C["100-106: Round 2: accepted combined validation and six-file patch baseline"]
+  FC_D["FC-D: Round 3: publish clean upstream-based branch and review exclusions; no ticket yet"]
+  FC_E["FC-E: Round 4: real DCO, upstream PR and observed-number news rename; no ticket yet"]
   FC_A --> FC_C
   FC_B --> FC_C
+  FC_C --> FC_D
+  FC_D --> FC_E
 ```
 
 The standalone graph is
 [fan-out-plan-100-102-full-captures.mmd](./fan-out-plan-100-102-full-captures.mmd).
-Neither edge is redundant: FC-C requires the implemented behavior and the
-documentation/release-note result independently. FC-C performs delivery work;
-it is not a no-op join.
+FC-C retains its two independent accepted inputs. FC-D requires its actual
+patch/evidence on main; FC-E requires the accepted published artifact and its
+main-based review record. There are no redundant transitive implementation edges.
 
 Fan-out: [verified issue and branch mapping](./fan-out-100-103-mapping.md).
 
@@ -117,7 +123,8 @@ All references below to Validation environment mean that document's section.
 
 ## Manifest and task content
 
-FC-A, FC-B and FC-C are commissioning keys, **not live Linear identifiers**.
+FC-A/FC-B/FC-C retain their commissioning keys and bind to existing Done issues.
+Only FC-D and FC-E are new commissioning keys, **not live Linear identifiers**.
 The node fields below are project-specific ticket content in the existing plan
 format, not additions to the shared schema. The unchanged shared parser validates
 the core graph/manifest contract; the execution contract records rendering limits.
@@ -140,12 +147,14 @@ defaults:
   task_pr_draft: true
   issue_assignee: Jeremy Carroll
   pr_assignee: jeremycarroll
-  edge_semantics: hard blockers; upstream accepted and merged to main before FC-C
+  edge_semantics: hard blockers; predecessor accepted, Done and task PR merged to main
   relation_type: blocks
   mutation_policy: fail closed; Backlog staging, verified relations, then Active
 nodes:
   - id: FC_A
     payload_key: FC-A
+    existing_issue: 100-104
+    issue_id: 8529b5a2-af58-41d7-b1c3-0995a14160bf
     title: Add full capture selection with configuration and reporter regression coverage
     type: task
     difficulty: hard
@@ -234,6 +243,8 @@ nodes:
 
   - id: FC_B
     payload_key: FC-B
+    existing_issue: 100-105
+    issue_id: cb829111-50a2-4d20-9622-7feece1a60ca
     title: Document full capture configuration and downstream reporter use
     type: task
     difficulty: easy
@@ -314,7 +325,9 @@ nodes:
 
   - id: FC_C
     payload_key: FC-C
-    title: Validate the combined change and finalize upstream submission or handoff
+    existing_issue: 100-106
+    issue_id: ca9ab374-b3fe-4f6d-b186-1cb5ef6c4e11
+    title: Retain accepted combined validation and reproducible patch baseline
     type: finalize
     difficulty: hard
     labels: [orange]
@@ -328,115 +341,193 @@ nodes:
       draft: true
       labels: [orange, symphony]
     summary: >-
-      Validate the accepted implementation and documentation together on main,
-      close project-scoped cleanup, and prepare the upstream-ready contribution.
-      Record either the actual upstream submission or a complete Jeremy-owned
-      submission handoff, including signoff and permission requirements, without
-      claiming an upstream merge, release or issue closure.
-    scope: Combined AC1-AC8 audit, limited discovered corrections, delivery evidence and upstream handoff; E4/E6 ownership.
-    creates:
-      - docs/symphony-plans/full-captures-delivery.md
-    edits:
-      - src/pytest_memray/plugin.py
-      - tests/test_pytest_memray.py
-      - tests/test_object_tracking.py
-      - README.md
-      - docs/configuration.rst
-      - docs/news/160.feature.rst
+      Existing Done 100-106 and merged PR7 retain combined validation, scoped
+      cleanup and the reproducible six-file patch. The accepted baseline is
+      complete; expanded branch delivery and submission transfer to FC-D/FC-E.
+    scope: Historical AC1-AC8 baseline evidence, not a new execution commission.
+    creates: []
+    edits: []
     owned_files:
-      - docs/symphony-plans/full-captures-delivery.md
-      - src/pytest_memray/plugin.py
-      - tests/test_pytest_memray.py
-      - tests/test_object_tracking.py
-      - README.md
-      - docs/configuration.rst
-      - docs/news/160.feature.rst
+      - docs/symphony-plans/full-captures-delivery.md (retained historical evidence)
     owned_external_resources:
-      - FC-C task branch/fork PR and its evidence in jeremycarroll/pytest-memray; read prior accepted PRs, do not modify active predecessor work.
-      - FC-C workspace-local combined validation captures, environments, build outputs and task containers; cleanup only these resources.
-      - One project-specific upstream submission to bloomberg/pytest-memray referencing issue 160, only through verified authorized submission/signoff; otherwise Jeremy owns that operation.
-    source_files:
-      - docs/symphony-plans/full-captures-requirements-design.md
-      - docs/symphony-plans/fan-out-plan-100-102-full-captures.md
-      - src/pytest_memray/plugin.py
-      - tests/test_pytest_memray.py
-      - tests/test_object_tracking.py
-      - README.md
-      - docs/configuration.rst
-      - docs/news/160.feature.rst
-      - .symphony.cfg.json
-      - pyproject.toml
-      - tox.ini
-      - Makefile
-      - docker-compose.yml
-    source_notes: Inspect accepted FC-A/FC-B PRs and full workpad/check/review evidence, the upstream issue and current upstream contribution/DCO instructions; do not infer current authority from fork access.
+      - Accepted PR7 and 100-106 workpads are read-only inputs; no reopening or new PR.
     dependencies:
       - item: FC-A
         type: hard
-        requires: FC-A accepted, Done and merged into main with passing checks and closed mandatory feedback.
-        reason: Combined runtime acceptance and transfer of plugin/test correction ownership require the actual implemented result.
+        requires: Accepted Done result merged to main.
+        reason: Combined runtime baseline.
       - item: FC-B
         type: hard
-        requires: FC-B accepted, Done and merged into main with passing checks and closed mandatory feedback.
-        reason: Combined user workflow and transfer of documentation/news correction ownership require the actual documentation result.
-    integration_pattern:
-      pattern: none
-    finalization_responsibility:
-      - Audit project diff for TODO, FIXME, stub, adapter, disabled-path, compatibility-export and temporary-flag remnants; no temporary integration seam is planned. Record each disposition and preserve unrelated pre-existing markers.
-      - Remove or fix only project-introduced remnants within owned files after both predecessors land; amend the plan before expanding scope. Do not perform broad cleanup or delete open branches.
-      - Rename the provisional news fragment to docs/news/<actual-upstream-PR-number>.feature.rst only after observing that PR. Record the exact resolved source/destination ownership before editing; no glob authority over other fragments.
-      - Record no deployment/package release requirement, actual installed/tested refs, combined evidence, submission or precise human handoff and any observed maintainer decision.
-    required_actions:
-      - Fetch main and verify both accepted task merge results are present; record starting main SHA, both PRs/commits, final tested SHA, conflicts and scoped cleanup commits or none.
-      - Run combined regression and docs checks, repeat the documented full capture/stats workflow on a known allocating fixture, and verify aggregated default on the same installed version.
-      - Close the AC1-AC8 and E1-E6 ledger using exact evidence; inspect minimum-version coverage and supported object-tracking CI, rerunning only gaps or changed behavior.
-      - Use symphony-finalize-project for the scoped cleanup/evidence audit; fix demonstrated in-scope regressions, with targeted reruns and mandatory CI on any new head.
-      - Publish the delivery record in a clean main-based fork PR; do not include already merged predecessor commits in its diff. Preserve the actual tested code/installed package provenance separately from documentation-only later commits.
-      - Prepare the upstream submission from the accepted product-only diff of FC-A/FC-B and any FC-C corrections; list exact files/commits and exclude Symphony onboarding/planning files or unrelated fork divergence. Never submit the fork main branch wholesale.
-      - Verify submission permission and the contribution author's real DCO signoff; never fabricate signoff for Jeremy. Submit only when these are satisfied, otherwise deliver exact patch/commit source, target, title/body, checks and Jeremy actions in the pinned workpad and delivery record.
-      - Record upstream PR URL and actual number when submitted; update the fragment number as an explicitly scoped follow-up with current-head checks, or identify the exact rename instruction in the human handoff if no PR exists yet.
-      - Record any actual maintainer decision, remaining limitations and ownership. Hand project acceptance to Jeremy; never close issue 160, merge upstream, publish a package or claim completion from source availability.
+        requires: Accepted Done result merged to main.
+        reason: Combined documentation baseline.
     acceptance_checks:
-      - Both accepted task results are present on the recorded main ref; combined regression/docs/reporter behavior meets AC1-AC7 with versions and exact output evidence.
-      - Every project-scoped temporary marker is removed or explicitly accepted as durable; unrelated pre-existing code/markers remain untouched and no task containers persist.
-      - All 12 current-head required checks and fresh configured Cadence approval pass for the final fork PR; mandatory feedback is closed, branch clean, PR ready and labels/assignee verified.
-      - AC8 includes FC-A/FC-B/final fork PR links and either an actual upstream submission or a concrete Jeremy-owned submission package with exact base/diff, DCO/permission action and readback.
-      - News filename uses the observed upstream PR number if available; otherwise the delivery handoff gives the exact required rename, without inventing an identifier.
-      - Delivery document accounts for AC1-AC8, E1-E6, cleanup and no-deployment scope; no unsupported upstream acceptance, release or Done claim.
+      - Preserve the original installed/tested ref 0b2d99061f49ad125e84577780b01a3a4edcf3e3 and accepted product refs without relabeling later document commits as runtime execution.
+      - Reuse accepted 100-106 and PR7 merge4b47fd033ac826a9bb28ba8c64cd8d9de7bd1029; preserve historic source/check/review evidence at its actual SHA.
     validation_commands:
-      - "make check"
-      - "make lint"
-      - "make docs"
-      - "pipx run build[virtualenv] --sdist --wheel"
-      - "prettier --no-editorconfig --check docs/symphony-plans/full-captures-delivery.md README.md"
-      - "python -m towncrier build --draft --version 0.0.0"
-      - "python -c 'import sys, pytest, memray; print(sys.version); print(pytest.__version__); print(memray.__version__)'"
-      - "python -m pytest --memray --memray-full --native --trace-python-allocators --memray-bin-path CAPTURE_DIR TEST_FILE"
-      - "python -m memray stats CAPTURE.bin"
-      - "Repeat without --memray-full in a fresh directory and verify aggregated reporter rejection; record actual fixture paths, output, installed revision and versions."
-      - "git diff --check"
-      - "rg -n 'TODO|FIXME|stub|adapter|disabled|compat' src/pytest_memray/plugin.py tests/test_pytest_memray.py tests/test_object_tracking.py README.md docs/configuration.rst docs/news/160.feature.rst"
-      - "Then Docker only for unavailable required local checks, using Validation environment; otherwise record Docker: skipped — passed locally."
-      - "Then mandatory published-head Run and Build checks: all 12 named in Validation environment, plus upstream's observed requirements if a submission is made."
+      - "Historical make check, make lint, make docs, build, towncrier and reporter commands/results remain in the merged delivery record."
+      - "Historical native local → Docker only for gaps → all 12 published-head checks; do not invent missing/stale review evidence or rerun a Done task."
     delivery_notes:
-      - Estimate 100-200 additions and 0-30 deletions for the record; correction scope is bounded by demonstrated project defects, not an assumed cleanup budget.
-      - Own final E1/E2/E3 evidence closure, E4 actual identifiers/fragment name and E6 submission/signoff. Jeremy supplies E5 access only if needed.
-      - Correction ownership is sequential after both accepted merges, never parallel with FC-A/FC-B. Resolve the one news destination from the actual PR response and record it before mutation.
-      - Upstream submission is a distinct external handoff, not a task-branch base exception. The fork task PR always targets main; avoid unauthorized upstream writes and retain a reviewable product-only patch when access is absent.
-    split_criteria:
-      [
-        fan-out-finalization-boundary,
-        external-system-boundary,
-        proof-of-work-boundary,
-      ]
+      - Original estimate 100-200 additions/0-30 deletions. No additional PR commissioned for this node.
+      - FC-D receives product-diff construction and exclusion ownership; FC-E receives actual-number fragment and upstream submission ownership after FC-D acceptance.
     exclusions:
-      - No release/tag/PyPI or hosted deployment, upstream merge or issue closure, broad refactor, shared planning/review process edits or fabricated DCO signoff.
-      - No unrelated fork changes in the upstream contribution and no deletion of other workers' resources or historical planning evidence.
+      - No new product edits, branch publication, submission or issue state changes by FC-C under R2.
+
+  - id: FC_D
+    payload_key: FC-D
+    title: Publish and review the clean full-captures contribution branch
+    type: task
+    difficulty: hard
+    labels: [orange]
+    branch:
+      template: symphony/full-captures/${issue}/prepare-clean-branch
+      base: main
+      birth: on_dispatch
+    pr:
+      create: when_independent_work_publishable
+      base: main
+      draft: true
+      labels: [orange, symphony]
+    summary: >-
+      Publish the accepted six-file contribution on a clean branch based on
+      observed Bloomberg main, with no unrelated fork history. Give Jeremy a
+      main-based preparation PR reviewing the exact exclusions, branch history,
+      product diff, reproducibility and checks before upstream submission.
+    scope: Direct artifact construction/publication and reviewable preparation/removal inventory; no upstream PR.
+    creates:
+      - docs/symphony-plans/full-captures-clean-branch.md
+    edits: []
+    owned_files:
+      - docs/symphony-plans/full-captures-clean-branch.md in the main-based task PR
+      - Only the six allowlisted product files in the separate external artifact, using the exact accepted patch
+    owned_external_resources:
+      - jeremycarroll/pytest-memray refs/heads/full-captures-upstream; sole FC-D writer until accepted handoff, Jeremy resource owner.
+      - FC-D task branch, main-based fork PR, its checks/reviews and workspace-local isolated validation outputs.
+      - Read-only upstream main, issue160, organization templates and prior accepted fork PRs/workpads.
+    source_files:
+      - docs/symphony-plans/full-captures-delivery.md
+      - docs/symphony-plans/full-captures-execution-contract.md
+      - docs/symphony-plans/full-captures-requirements-design.md
+      - .symphony.cfg.json
+    source_notes: Read the full source ledger and clean-branch recipe in the execution contract; refresh main/upstream/branch existence and human feedback.
+    dependencies:
+      - item: FC-C
+        type: hard
+        requires: 100-106 accepted/Done, PR7 merged, exact patch and combined proof available on main.
+        reason: Construction must use accepted combined evidence; no unmerged predecessor commits.
+    required_actions:
+      - Verify accepted R2 and fan-out100-108 issue/relation readbacks; start the Symphony task branch and PR from/to current fork main.
+      - Reproduce the recorded checksum and six-file patch; refresh upstream main and verify application, resulting tree, changed file list and complete included commit history.
+      - Inventory every fork-only path/commit excluded using the exact snapshot and allowlist in the execution contract; retain upstream versions of modified working files such as zizmor.yml.
+      - Create the separate branch directly from observed upstream main with one product-only commit under the actual author identity; no Jeremy signoff assertion unless actually supplied. Use the lifecycle recipe and fail closed on unexpected existing branch state.
+      - Publish that branch to the fork and read back its SHA, parent, tree, six-file diff and full upstream-base..head history. No task PR targets it.
+      - Publish the main-based preparation record with immutable commit/compare links, exact base/source/head/tree/patch checksum, explicit removal-by-exclusion table and artifact CI. Jeremy reviews this record PR and the linked artifact diff.
+      - Run artifact regression/lint/docs/build and full-vs-aggregated stats using the execution contract; record actual installed ref separately. Reuse unchanged minimum/object evidence only where its source and environment cover the claim.
+      - Obtain all12 baseline current-head checks on both the task PR and published artifact; fresh Codex/hackcadence approval of the task head must explicitly cover the recorded artifact SHA and exclusions.
+      - Freeze the accepted artifact SHA and record Jeremy's acceptance in the task record/workpad; transfer branch write ownership to FC-E only after FC-D Done and task PR merged to main.
+    acceptance_checks:
+      - Artifact base is observed Bloomberg main; one new product-only commit, exact six-file diff and no fork-only ancestry or working files added.
+      - Expected unchanged-base patch SHA256/tree/count match the recorded baseline; any upstream advancement has an explicit new base/tree/diff and scoped validation, with conflicts paused if resolution would alter accepted behavior.
+      - Main-based task PR changes only the preparation record and preserves all historical evidence; links let a human review both the excluded material and resulting product/commit history.
+      - Branch publication/readback, all12 artifact and task checks, current-head Cadence, closed feedback, clean/ready task PR, orange/symphony and jeremycarroll verified.
+      - Actual unsigned/signed status is explicit; no upstream submission or project-completion claim. Accepted artifact mutation belongs next to FC-E.
+    validation_commands:
+      - "Execute Clean branch recipe in the execution contract; record git apply checks, sha256sum, write-tree, diff --stat/name-status, log base..head and ls-remote readbacks."
+      - "On artifact: make check; make lint; make docs; pipx run build[virtualenv] --sdist --wheel; python -m towncrier build --draft --version 0.0.0."
+      - "On artifact: execute the merged delivery record's allocating fixture and both exact full/aggregated capture plus stats command patterns in fresh workspace-local directories; resolve emitted paths and record versions/installed SHA."
+      - "On task: prettier --no-editorconfig --check docs/symphony-plans/full-captures-clean-branch.md; make docs; git diff --check."
+      - "Then Docker only for local environment gaps using Validation environment; otherwise Docker: skipped — passed locally."
+      - "Then all12 Run/Build current-head checks from App15368 on task and artifact; record SHA/run/attempt/workflow and each child."
+    delivery_notes:
+      - Estimate180-280 additions/0-20 deletions in record; artifact560 additions/39 deletions. Keep inventory, construction and review in one coherent node.
+      - FC-C evidence stays immutable; FC-D owns new provenance. Jeremy owns the fork branch resource and acceptance. FC-E alone performs later signoff replacement and PR-number rename.
+    exclusions:
+      - No deletion of fork main history, product behavior changes, extra files in artifact, task PR against artifact/predecessor, copied fork commits, new planner/schema or shared process edits.
+      - No upstream write/PR, fabricated DCO, news rename before actual PR, upstream merge/closure, release/tag/PyPI or hosted deploy.
+
+  - id: FC_E
+    payload_key: FC-E
+    title: Certify and submit the accepted clean branch upstream with the actual news number
+    type: finalize
+    difficulty: hard
+    labels: [orange]
+    branch:
+      template: symphony/full-captures/${issue}/submit-upstream
+      base: main
+      birth: on_dispatch
+    pr:
+      create: when_independent_work_publishable
+      base: main
+      draft: true
+      labels: [orange, symphony]
+    summary: >-
+      Prepare the actual organization-template upstream PR, obtain genuine
+      author certification and verified submission permission, submit the
+      accepted clean branch to Bloomberg main, then rename the one feature
+      fragment using the observed PR number and close current-head evidence.
+    scope: E4/E6 final submission, exact news rename on both surfaces and main-based submission record.
+    creates:
+      - docs/symphony-plans/full-captures-upstream-submission.md
+      - docs/news/<observed-upstream-PR-number>.feature.rst (rename only, after actual number)
+    edits:
+      - docs/news/160.feature.rst (rename source only)
+    owned_files:
+      - docs/symphony-plans/full-captures-upstream-submission.md in the task PR
+      - docs/news/160.feature.rst and its single observed-number destination, in task and artifact
+    owned_external_resources:
+      - jeremycarroll/pytest-memray refs/heads/full-captures-upstream after FC-D accepted/Done/main merge; Jeremy owner, FC-E exclusive coordination.
+      - One bloomberg/pytest-memray pull request to main from jeremycarroll:full-captures-upstream, through verified submission authority only.
+      - FC-E main-based task branch/PR and isolated checks; artifact/upstream current-head checks and feedback readback.
+    source_files:
+      - docs/symphony-plans/full-captures-clean-branch.md (accepted FC-D output)
+      - docs/symphony-plans/full-captures-delivery.md
+      - docs/symphony-plans/full-captures-execution-contract.md
+      - docs/news/160.feature.rst
+      - pyproject.toml
+      - .symphony.cfg.json
+    source_notes: Refresh upstream and org README/contribution/DCO/template/rules/checks, issue160/all comments, accepted FC-D head and all task feedback.
+    dependencies:
+      - item: FC-D
+        type: hard
+        requires: Published clean artifact accepted by Jeremy, FC-D Done and preparation PR merged to main, with exact artifact head and checks.
+        reason: Submission and branch-write transfer require a reviewed concrete artifact, not the old patch-only package.
+    required_actions:
+      - Start task branch/PR from/to current fork main; inspect the accepted artifact and detect drift before any write. Prepare the exact template-shaped title/body and all readbacks first.
+      - Verify contribution author's real DCO certification and authority to submit using the actual authorized identity. Fork write permission/approval is insufficient. Never borrow credentials or manufacture a signoff.
+      - If artifact is unsigned, Jeremy replaces its sole product commit with a genuinely signed-off commit with the same observed upstream parent and tree; record old/new SHA, actual author/signoff and explicit lease. Rerun artifact CI and obtain review of the changed head before submission.
+      - If certification or access is unavailable, finish the independent prepared package/main draft PR; name Jeremy's exact certification, branch update or cross-fork create action and required API readback. Keep dependent submission pending/Inactive, not complete.
+      - Refresh source/rules/template and upstream base; if changed, revalidate affected code and obtain acceptance of the new exact artifact. Do not copy fork history or weaken the product contract.
+      - Open exactly one upstream PR from the accepted certified artifact using the observed organization template. Read existing PR associations before retrying an ambiguous create. Record actual URL/number/base/head/author/files/commits and emitted requirements.
+      - Only after observing the actual upstream PR number, record and perform the exact fragment rename on artifact and main-based task branch. Preserve text and other fragments; Jeremy signs off every contributed artifact commit. If number160, record an evidence-backed no-op.
+      - Run towncrier/docs/diff checks, all12 fork/task/artifact checks and actual upstream current-head required checks after the rename; preserve check App/run/attempt provenance and maintainer feedback.
+      - Close scoped final audit in the submission record; fresh Codex/hackcadence approval of current task head must cover the final upstream artifact SHA, signoff, checks and feedback. Hand acceptance to Jeremy.
+    acceptance_checks:
+      - Actual upstream PR exists with verified target/head, real contribution authors/signoffs, exactly the accepted product diff and observed-number feature fragment. A prepared command, branch or permission request is not submission.
+      - Final task and artifact heads have all12 baseline checks; actual upstream required checks including DCO if emitted/required pass on final head. Pending/skipped/stale evidence is not passing.
+      - Task record includes accepted FC-D ref, old/new certified heads, actual installed/tested refs, template source/body, upstream URL/number, exact rename and any maintainer decision; no false merge/closure/release claim.
+      - Mandatory feedback closed, fresh current-head Codex/hackcadence approval, clean/ready main PR, orange/symphony labels and jeremycarroll assignment verified. Jeremy owns Done and any later maintainer response.
+    validation_commands:
+      - "Execute Submission and certification recipe in the execution contract; verify log base..head, author/signoff for every commit, parent/tree equality and exact lease/readback before submission."
+      - "gh pr view ACTUAL_UPSTREAM_PR --repo bloomberg/pytest-memray --json url,number,baseRefName,headRefOid,files,commits,statusCheckRollup"
+      - "python -m towncrier build --draft --version 0.0.0; make docs; git diff --check (both task and artifact after exact rename)."
+      - "prettier --no-editorconfig --check docs/symphony-plans/full-captures-upstream-submission.md"
+      - "Rerun artifact make check/make lint/build and affected reporter checks for changed base/product source; preserve prior installed provenance for unchanged source."
+      - "Then Docker only for local environment gaps using Validation environment; otherwise Docker: skipped — passed locally."
+      - "Then all12 task/artifact Run/Build jobs App15368 plus actual upstream current-head requirements after final rename; inspect reviews/comments/threads and fresh Linear feedback."
+    delivery_notes:
+      - Estimate120-220 additions/0-10 deletions in task record plus exact rename; artifact has certified metadata replacement and one signed-off rename commit, no fork history.
+      - FC-D stops writes at transfer. FC-E owns fragment and submission end-to-end to avoid another task blocked merely on a discoverable PR number. Missing external input gates only dependent writes, while independent preparation is published.
+    exclusions:
+      - No upstream merge or issue closure, release/tag/PyPI, hosted deploy, new feature, unrelated fragment/product edits, fabricated identity/signoff or credentials expansion.
+      - Do not delete the submission branch while the upstream PR depends on it; Jeremy owns retention after this project handoff.
 edges:
   - from: FC_A
     to: FC_C
   - from: FC_B
     to: FC_C
+  - from: FC_C
+    to: FC_D
+  - from: FC_D
+    to: FC_E
 ```
 
 ## Branch manifest
@@ -449,22 +540,31 @@ and all start draft. The readiness contract above governs ready status.
 | ---- | -------------------------------------------------------- | ----------- | ------- | ------------------------------------------ |
 | FC_A | `symphony/full-captures/${issue}/full-capture-selection` | main        | main    | Draft when independent work is publishable |
 | FC_B | `symphony/full-captures/${issue}/full-capture-docs`      | main        | main    | Draft when independent work is publishable |
-| FC_C | `symphony/full-captures/${issue}/finalize-full-captures` | main        | main    | Draft when independent work is publishable |
+| FC_C | `symphony/full-captures/${issue}/finalize-full-captures` | main        | main    | Historical draft, accepted PR #7           |
+| FC_D | `symphony/full-captures/${issue}/prepare-clean-branch`   | main        | main    | Draft when independent work is publishable |
+| FC_E | `symphony/full-captures/${issue}/submit-upstream`        | main        | main    | Draft when independent work is publishable |
 
 ## Linear Relation Payloads
 
 These are the complete hard-edge instructions. They are symbolic inspection
-payloads until 100-103 replaces each key with the **observed** issue UUID.
+payloads until 100-108 binds every endpoint to its **observed** issue UUID.
+A/B→C already exist; verify and reuse them. Create only C→D and D→E.
+The shared parser uses existing identifiers for retained nodes; do not replace
+them with fresh payloads. Existing UUIDs are in the manifest and historic mapping.
 
 | Source       | issueId | relatedIssueId | type   |
 | ------------ | ------- | -------------- | ------ |
-| FC_A to FC_C | FC-A    | FC-C           | blocks |
-| FC_B to FC_C | FC-B    | FC-C           | blocks |
+| FC_A to FC_C | 100-104 | 100-106        | blocks |
+| FC_B to FC_C | 100-105 | 100-106        | blocks |
+| FC_C to FC_D | 100-106 | FC-D           | blocks |
+| FC_D to FC_E | FC-D    | FC-E           | blocks |
 
 ```json
 [
-  { "issueId": "FC-A", "relatedIssueId": "FC-C", "type": "blocks" },
-  { "issueId": "FC-B", "relatedIssueId": "FC-C", "type": "blocks" }
+  { "issueId": "100-104", "relatedIssueId": "100-106", "type": "blocks" },
+  { "issueId": "100-105", "relatedIssueId": "100-106", "type": "blocks" },
+  { "issueId": "100-106", "relatedIssueId": "FC-D", "type": "blocks" },
+  { "issueId": "FC-D", "relatedIssueId": "FC-E", "type": "blocks" }
 ]
 ```
 
@@ -493,17 +593,38 @@ the generated implementation graph and are not recreated by this table.
    E1/E2 assign minimum Memray 1.19.1 and real stats proof to FC-A, checked again
    by FC-C. Temporal HTML is optional; no dependency bump or benchmark project
    is presumed. Record actual failures before amending the design.
-6. **Stage relations before activation.** 100-103 creates exactly three task
-   issues in Backlog, verifies IDs and both directions, then moves all to Active.
+6. **Stage relations before activation.** 100-108 creates only FC-D/FC-E in
+   Backlog, reuses A/B/C, verifies IDs and both directions, then activates new work.
    Unfinished predecessors gate dispatch. No human hold was requested.
 7. **Gate human handoff on current evidence.** Every node owns local/Docker/CI
    proof and fresh configured Cadence approval, feedback closure, clean branch
    and ready PR. Blocker-side mature follows the shared contract above, not an
    earlier approved SHA or source-only evidence.
-8. **Finalize a product-only upstream handoff.** FC-C owns the delivery record,
-   bounded corrections, news-number substitution and exact DCO/permission
-   handoff to Jeremy. Accepted design D8/R7 permits submission or handoff;
-   deployment, release, upstream merge and issue closure are excluded.
+8. **Preserve the baseline and transfer delivery.** FC-C/100-106 is accepted
+   combined proof and patch preparation, not completed expanded delivery.
+   FC-D takes branch construction/exclusion review; FC-E takes E4 actual-number
+   rename and E6 certification/submission. The execution contract's ownership
+   table supersedes historical FC-B/FC-C future-tense handoff text. R1–R6,
+   D1–D7 and AC1–AC7 product behavior remain unchanged; R7/D8/AC8/E4/E6 now
+   require the tracked branch and actual submission, with missing input recorded
+   only against its dependent action.
+9. **Construct the artifact directly.** FC-D creates `full-captures-upstream`
+   from observed upstream main with one product-only commit; every fork-only
+   ancestor is excluded. Its task PR on main reviews the exact allowlist,
+   exclusions, SHA/tree, compare/commit links and validation. Preserve historical
+   evidence on main. This is an external resource declaration, not a task branch
+   base exception or a new shared schema.
+10. **Certify before submission.** FC-E verifies the contribution author's real
+    DCO and submission permission. Jeremy replaces an unsigned preparation
+    commit with a genuinely certified commit of the same parent/tree, if needed,
+    before opening the upstream PR. Recheck the changed SHA and review evidence;
+    no fabricated author or signoff. An unavailable permission or certification
+    leaves FC-E pending with exact Jeremy action/readback, not submitted/Done.
+11. **Observe before naming.** FC-E reads the actual upstream PR number, then
+    owns only `160.feature.rst` → that number's feature fragment on both the
+    artifact and main-based task branch. It obtains fresh head checks after the
+    rename and records maintainer feedback. No upstream merge, closure, release,
+    tag/PyPI, hosted deploy or new feature is authorized.
 
 [project]: https://linear.app/1000lines/project/full-fidelity-memray-captures-b6e86c398fab
 [planning-ticket]: https://linear.app/1000lines/issue/100-102

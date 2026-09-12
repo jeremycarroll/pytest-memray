@@ -6,6 +6,21 @@ package is prepared below; Jeremy owns its signoff and submission. The combined
 validation review is [PR #7][pr-c], targeting **main**. No deployment or package release
 is required.
 
+## R2 ownership handoff
+
+This FC-C record was accepted in PR7 at 9d66e4975ef3406b67db46fba9048e3ded186a62
+and merged as 4b47fd033ac826a9bb28ba8c64cd8d9de7bd1029. Its executed ref and patch
+proof below remain historical facts. The [R2 plan](./fan-out-plan-100-102-full-captures.md)
+now assigns FC-D the clean branch and main-based exclusion/preparation review;
+FC-E receives branch writes after D acceptance and owns real DCO, upstream PR,
+actual-number news rename and submission evidence. 100-108 creates only those
+reviewed tasks after 100-107 acceptance/merge. No delivery artifact exists merely
+because this plan was written; the former generic upstream body is a baseline
+input that FC-E adapts to the now-observed organization PR template. See the
+[execution contract](./full-captures-execution-contract.md#submission-and-certification-recipe--fc-e-only).
+The earlier seed/branch instructions below record the state when FC-C handed off,
+not completion of the expanded delivery or fresh review of later commits.
+
 ## Human-directed delivery follow-up
 
 Jeremy's [review on 2026-09-12][delivery-review] requests an actual clean delivery
