@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import pickle
 import re
+import sys
 import xml.etree.ElementTree as ET
 from types import SimpleNamespace
 from unittest.mock import ANY
@@ -8,11 +10,31 @@ from unittest.mock import patch
 
 import pytest
 from memray import FileFormat
+from memray import FileReader
 from memray import Tracker
 from pytest import ExitCode
 from pytest import Pytester
 
 from pytest_memray.marks import StackFrame
+from pytest_memray.plugin import Manager
+
+
+@pytest.fixture(params=[[], ["--memray-full"]], ids=["aggregated", "full"])
+def capture_args(request: pytest.FixtureRequest) -> list[str]:
+    return request.param
+
+
+def configure_full_capture(
+    pytester: Pytester, config_file: str, value: str | None
+) -> None:
+    setting = "" if value is None else f"memray_full = {value}"
+    if config_file == "pytest.ini":
+        pytester.makeini(f"[pytest]\n{setting}")
+    else:
+        # Exercise native TOML Booleans as well as pytest's string forms.
+        if value is not None and value not in ("true", "false"):
+            setting = f'memray_full = "{value}"'
+        pytester.makepyprojecttoml(f"[tool.pytest.ini_options]\n{setting}")
 
 
 def extract_stacks(test_output: str) -> list[list[StackFrame]]:
@@ -39,9 +61,134 @@ def test_help_message(pytester: Pytester) -> None:
         [
             "memray:",
             "*--memray*Activate memray tracking",
+            "*--memray-full*Capture all allocations*",
             "*memray (bool)*",
+            "*memray_full (bool)*",
         ]
     )
+    assert "larger files and potentially slower runs" in " ".join(
+        result.stdout.str().split()
+    )
+
+
+@pytest.mark.parametrize("config_file", ["pytest.ini", "pyproject.toml"])
+@pytest.mark.parametrize(
+    "ini, args, full",
+    [
+        (None, [], False),
+        ("false", [], False),
+        ("true", [], True),
+        ("yes", [], True),
+        ("on", [], True),
+        ("1", [], True),
+        ("TrUe", [], True),
+        ("no", [], False),
+        ("off", [], False),
+        ("0", [], False),
+        ("FaLsE", [], False),
+        (None, ["--memray-full"], True),
+        ("false", ["--memray-full"], True),
+        ("true", ["--memray-full"], True),
+        ("false", ["--memray-full", "--memray-full"], True),
+        ("true", ["--memray-full", "--memray-full"], True),
+        ("true", ["-o", "memray_full=false"], False),
+        ("false", ["-o", "memray_full=true"], True),
+        ("true", ["--memray-full", "-o", "memray_full=false"], True),
+    ],
+)
+def test_full_capture_configuration(
+    pytester: Pytester, config_file: str, ini: str | None, args: list[str], full: bool
+) -> None:
+    configure_full_capture(pytester, config_file, ini)
+    pytester.makepyfile("def test_allocates():\n    assert bytearray(4096)")
+
+    with patch("pytest_memray.plugin.Tracker", wraps=Tracker) as tracker:
+        result = pytester.runpytest("--memray", *args)
+
+    result.assert_outcomes(passed=1)
+    tracker.assert_called_once_with(
+        ANY,
+        native_traces=False,
+        trace_python_allocators=False,
+        file_format=(
+            FileFormat.ALL_ALLOCATIONS if full else FileFormat.AGGREGATED_ALLOCATIONS
+        ),
+    )
+
+
+@pytest.mark.parametrize("config_file", ["pytest.ini", "pyproject.toml"])
+@pytest.mark.parametrize("active", [False, True])
+@pytest.mark.parametrize("persistent", [False, True])
+def test_invalid_full_capture_ini_fails_before_setup(
+    pytester: Pytester,
+    monkeypatch: pytest.MonkeyPatch,
+    config_file: str,
+    active: bool,
+    persistent: bool,
+    capture_args: list[str],
+) -> None:
+    monkeypatch.delenv("MEMRAY_RESULT_PATH", raising=False)
+    configure_full_capture(pytester, config_file, "sometimes")
+    pytester.makepyfile("def test_not_run():\n    assert False")
+    dump = pytester.path / "captures"
+    args = ["--memray"] if active else []
+    if persistent:
+        # The existing argument parser creates this directory; Manager must
+        # never create its metadata directory or temporary result directory.
+        args.extend(["--memray-bin-path", str(dump)])
+
+    with patch("pytest_memray.plugin.Manager", wraps=Manager) as manager:
+        with patch("pytest_memray.plugin.Tracker") as tracker:
+            with patch("pytest_memray.plugin.TemporaryDirectory") as temporary:
+                result = pytester.runpytest(*args, *capture_args)
+
+    assert result.ret == ExitCode.USAGE_ERROR
+    result.stderr.fnmatch_lines(["*memray_full*sometimes*"])
+    manager.assert_not_called()
+    tracker.assert_not_called()
+    temporary.assert_not_called()
+    assert not (dump / "metadata").exists()
+    assert not list(dump.glob("*.bin"))
+
+
+@pytest.mark.parametrize("config_file", ["pytest.ini", "pyproject.toml"])
+@pytest.mark.parametrize("value", ["false", "true", "sometimes"])
+def test_full_capture_flag_rejects_attached_values(
+    pytester: Pytester, config_file: str, value: str
+) -> None:
+    configure_full_capture(pytester, config_file, "true")
+    with patch("pytest_memray.plugin.Manager") as manager:
+        result = pytester.runpytest(f"--memray-full={value}")
+
+    assert result.ret == ExitCode.USAGE_ERROR
+    result.stderr.fnmatch_lines(["*--memray-full*ignored explicit argument*"])
+    manager.assert_not_called()
+
+
+@pytest.mark.parametrize("config_file", ["pytest.ini", "pyproject.toml"])
+@pytest.mark.parametrize("marked", [False, True])
+def test_full_capture_ini_preserves_activation(
+    pytester: Pytester, config_file: str, marked: bool
+) -> None:
+    configure_full_capture(pytester, config_file, "true")
+    marker = '@pytest.mark.limit_memory("1MB")' if marked else ""
+    pytester.makepyfile(
+        f"import pytest\n{marker}\ndef test_allocates():\n    assert bytearray(4096)"
+    )
+    with patch("pytest_memray.plugin.Tracker", wraps=Tracker) as tracker:
+        result = pytester.runpytest()
+
+    result.assert_outcomes(passed=1)
+    assert "MEMRAY REPORT" not in result.stdout.str()
+    if marked:
+        tracker.assert_called_once_with(
+            ANY,
+            native_traces=False,
+            trace_python_allocators=False,
+            file_format=FileFormat.ALL_ALLOCATIONS,
+        )
+    else:
+        tracker.assert_not_called()
 
 
 def test_memray_is_called_when_activated(pytester: Pytester) -> None:
@@ -59,7 +206,9 @@ def test_memray_is_called_when_activated(pytester: Pytester) -> None:
     assert result.ret == ExitCode.OK
 
 
-def test_memray_is_not_called_when_not_activated(pytester: Pytester) -> None:
+def test_memray_is_not_called_when_not_activated(
+    pytester: Pytester, capture_args: list[str]
+) -> None:
     pytester.makepyfile(
         """
         def test_hello_world():
@@ -68,7 +217,7 @@ def test_memray_is_not_called_when_not_activated(pytester: Pytester) -> None:
     )
 
     with patch("pytest_memray.plugin.Tracker") as mock:
-        result = pytester.runpytest()
+        result = pytester.runpytest(*capture_args)
 
     mock.assert_not_called()
     assert result.ret == ExitCode.OK
@@ -83,7 +232,9 @@ def test_memray_is_not_called_when_not_activated(pytester: Pytester) -> None:
         (1024 * 1, ExitCode.OK),
     ],
 )
-def test_limit_memory_marker(pytester: Pytester, size: int, outcome: ExitCode) -> None:
+def test_limit_memory_marker(
+    pytester: Pytester, size: int, outcome: ExitCode, capture_args: list[str]
+) -> None:
     pytester.makepyfile(
         f"""
         import pytest
@@ -97,13 +248,13 @@ def test_limit_memory_marker(pytester: Pytester, size: int, outcome: ExitCode) -
         """
     )
 
-    result = pytester.runpytest("--memray")
+    result = pytester.runpytest(*capture_args, "--memray")
 
     assert result.ret == outcome
 
 
 def test_limit_memory_marker_does_work_if_memray_not_passed(
-    pytester: Pytester,
+    pytester: Pytester, capture_args: list[str]
 ) -> None:
     pytester.makepyfile(
         """
@@ -118,7 +269,7 @@ def test_limit_memory_marker_does_work_if_memray_not_passed(
         """
     )
 
-    result = pytester.runpytest()
+    result = pytester.runpytest(*capture_args)
 
     assert result.ret == ExitCode.TESTS_FAILED
 
@@ -283,7 +434,13 @@ def test_limit_memory_allocation_list_truncation(
 
 
 @pytest.mark.parametrize("native", [True, False])
-def test_memray_report_native(native: bool, pytester: Pytester) -> None:
+@pytest.mark.parametrize("trace_python_allocators", [True, False])
+def test_memray_report_native(
+    native: bool,
+    trace_python_allocators: bool,
+    pytester: Pytester,
+    capture_args: list[str],
+) -> None:
     pytester.makepyfile(
         """
         import pytest
@@ -298,7 +455,12 @@ def test_memray_report_native(native: bool, pytester: Pytester) -> None:
     )
 
     with patch("pytest_memray.plugin.Tracker", wraps=Tracker) as mock:
-        result = pytester.runpytest("--memray", *(["--native"] if native else []))
+        result = pytester.runpytest(
+            *capture_args,
+            "--memray",
+            *(["--native"] if native else []),
+            *(["--trace-python-allocators"] if trace_python_allocators else []),
+        )
 
     assert result.ret == ExitCode.TESTS_FAILED
 
@@ -306,8 +468,12 @@ def test_memray_report_native(native: bool, pytester: Pytester) -> None:
     mock.assert_called_once_with(
         ANY,
         native_traces=native,
-        trace_python_allocators=False,
-        file_format=FileFormat.AGGREGATED_ALLOCATIONS,
+        trace_python_allocators=trace_python_allocators,
+        file_format=(
+            FileFormat.ALL_ALLOCATIONS
+            if capture_args
+            else FileFormat.AGGREGATED_ALLOCATIONS
+        ),
     )
 
     if native:
@@ -318,7 +484,7 @@ def test_memray_report_native(native: bool, pytester: Pytester) -> None:
 
 @pytest.mark.parametrize("trace_python_allocators", [True, False])
 def test_memray_report_python_allocators(
-    trace_python_allocators: bool, pytester: Pytester
+    trace_python_allocators: bool, pytester: Pytester, capture_args: list[str]
 ) -> None:
     pytester.makepyfile(
         """
@@ -340,6 +506,7 @@ def test_memray_report_python_allocators(
 
     with patch("pytest_memray.plugin.Tracker", wraps=Tracker) as mock:
         result = pytester.runpytest(
+            *capture_args,
             "--memray",
             *(["--trace-python-allocators"] if trace_python_allocators else []),
         )
@@ -353,7 +520,11 @@ def test_memray_report_python_allocators(
         ANY,
         native_traces=False,
         trace_python_allocators=trace_python_allocators,
-        file_format=FileFormat.AGGREGATED_ALLOCATIONS,
+        file_format=(
+            FileFormat.ALL_ALLOCATIONS
+            if capture_args
+            else FileFormat.AGGREGATED_ALLOCATIONS
+        ),
     )
 
     if trace_python_allocators:
@@ -362,7 +533,7 @@ def test_memray_report_python_allocators(
         assert "allocate_with_pymalloc" not in output
 
 
-def test_memray_report(pytester: Pytester) -> None:
+def test_memray_report(pytester: Pytester, capture_args: list[str]) -> None:
     pytester.makepyfile(
         """
         import pytest
@@ -385,7 +556,7 @@ def test_memray_report(pytester: Pytester) -> None:
         """
     )
 
-    result = pytester.runpytest("--memray")
+    result = pytester.runpytest(*capture_args, "--memray")
 
     assert result.ret == ExitCode.OK
 
@@ -594,6 +765,146 @@ def test_bin_path(pytester: Pytester) -> None:
     assert f"Created 3 binary dumps at {dump} with prefix H" in output
 
 
+@pytest.mark.parametrize("prefix", [None, "capture"])
+def test_persisted_captures_are_readable_after_exit(
+    pytester: Pytester,
+    monkeypatch: pytest.MonkeyPatch,
+    capture_args: list[str],
+    prefix: str | None,
+) -> None:
+    monkeypatch.delenv("MEMRAY_RESULT_PATH", raising=False)
+    pytester.makepyfile(
+        **{
+            "magic/test_allocations": """
+                import pytest
+
+                def test_single():
+                    assert bytearray(4096)
+
+                @pytest.mark.parametrize('size', [8192, 16384])
+                def test_parameter(size):
+                    assert bytearray(size)
+            """
+        }
+    )
+    dump = pytester.path / "captures"
+    prefix_args = ["--memray-bin-prefix", prefix] if prefix is not None else []
+    result = pytester.runpytest_subprocess(
+        "--memray", *capture_args, "--memray-bin-path", str(dump), *prefix_args
+    )
+    result.assert_outcomes(passed=3)
+
+    captures = sorted(dump.glob("*.bin"))
+    assert len(captures) == 3
+    emitted_prefix = captures[0].name.split("-", 1)[0]
+    if prefix is None:
+        assert re.fullmatch(r"[0-9a-f]{32}", emitted_prefix)
+    else:
+        assert emitted_prefix == prefix
+    cases = {"test_single", "test_parameter[8192]", "test_parameter[16384]"}
+    assert {path.name for path in captures} == {
+        f"{emitted_prefix}-magic-test_allocations.py-{case}.bin" for case in cases
+    }
+    metadata_files = list((dump / "metadata").glob("*.metadata"))
+    assert {path.stem for path in metadata_files} == {path.stem for path in captures}
+    results = [pickle.loads(path.read_bytes()) for path in metadata_files]
+    assert {item.test_id for item in results} == {
+        f"magic/test_allocations.py::{case}" for case in cases
+    }
+    for item in results:
+        assert item.result_file in captures
+        assert item.result_file.stat().st_size > 0
+        with FileReader(item.result_file) as reader:
+            assert reader.metadata == item.metadata
+            assert reader.metadata.file_format == (
+                FileFormat.ALL_ALLOCATIONS
+                if capture_args
+                else FileFormat.AGGREGATED_ALLOCATIONS
+            )
+            assert reader.metadata.peak_memory > 0
+            assert reader.metadata.total_allocations > 0
+            assert not reader.metadata.has_native_traces
+            assert not reader.metadata.trace_python_allocators
+            assert list(reader.get_high_watermark_allocation_records())
+        assert reader.closed
+        assert item.result_file.exists()
+
+
+def test_stats_requires_full_capture(
+    pytester: Pytester, monkeypatch: pytest.MonkeyPatch, capture_args: list[str]
+) -> None:
+    monkeypatch.delenv("MEMRAY_RESULT_PATH", raising=False)
+    test_file = pytester.makepyfile(
+        """
+        def test_allocations():
+            buffers = [bytearray(4096) for _ in range(20)]
+            assert sum(map(len, buffers)) == 81920
+        """
+    )
+    dump = pytester.path / "captures"
+    result = pytester.runpytest_subprocess(
+        "--memray", *capture_args, "--memray-bin-path", str(dump), str(test_file)
+    )
+    result.assert_outcomes(passed=1)
+    (capture,) = dump.glob("*.bin")
+    stats = pytester.run(sys.executable, "-m", "memray", "stats", str(capture))
+
+    if capture_args:
+        assert stats.ret == 0
+        match = re.search(r"Total allocations:\s*([\d,]+)", stats.stdout.str())
+        assert match is not None
+        assert int(match[1].replace(",", "")) > 0
+    else:
+        assert stats.ret != 0
+        assert "pre-aggregated capture file" in stats.stderr.str()
+
+
+@pytest.mark.parametrize("source", ["cli", "pytest.ini", "pyproject.toml"])
+def test_full_capture_propagates_to_workers(
+    pytester: Pytester, monkeypatch: pytest.MonkeyPatch, source: str
+) -> None:
+    monkeypatch.delenv("MEMRAY_RESULT_PATH", raising=False)
+    args = ["--memray-full"] if source == "cli" else []
+    if source != "cli":
+        configure_full_capture(pytester, source, "true")
+    pytester.makepyfile(
+        """
+        import pytest
+
+        @pytest.mark.parametrize('size', [4096, 8192])
+        def test_allocations(size):
+            assert bytearray(size)
+        """
+    )
+    dump = pytester.path / "captures"
+    result = pytester.runpytest_subprocess(
+        "--memray", *args, "-n", "2", "--memray-bin-path", str(dump)
+    )
+    result.assert_outcomes(passed=2)
+    assert "MEMRAY REPORT" in result.stdout.str()
+    assert "Total memory allocated:" in result.stdout.str()
+    captures = list(dump.glob("*.bin"))
+    assert len(captures) == 2
+    for capture in captures:
+        with FileReader(capture) as reader:
+            assert reader.metadata.file_format == FileFormat.ALL_ALLOCATIONS
+            assert reader.metadata.peak_memory > 0
+
+
+def test_temporary_full_captures_are_cleaned_up(
+    pytester: Pytester, monkeypatch: pytest.MonkeyPatch, capture_args: list[str]
+) -> None:
+    monkeypatch.delenv("MEMRAY_RESULT_PATH", raising=False)
+    pytester.makepyfile("def test_allocates():\n    assert bytearray(4096)")
+    with patch("pytest_memray.plugin.Tracker", wraps=Tracker) as tracker:
+        result = pytester.runpytest("--memray", *capture_args)
+    result.assert_outcomes(passed=1)
+    tracker.assert_called_once()
+    capture = tracker.call_args.args[0]
+    assert not capture.exists()
+    assert not capture.parent.exists()
+
+
 def test_bin_path_with_long_test_id(
     pytester: Pytester, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -673,7 +984,9 @@ def test_bin_path_with_long_test_id_and_long_prefix(
 
 
 @pytest.mark.parametrize("override", [True, False])
-def test_bin_path_prefix(pytester: Pytester, override: bool) -> None:
+def test_bin_path_prefix(
+    pytester: Pytester, override: bool, capture_args: list[str]
+) -> None:
     py = """
     import pytest
     def test_t():
@@ -685,7 +998,7 @@ def test_bin_path_prefix(pytester: Pytester, override: bool) -> None:
     if override:
         bin_path.write_bytes(b"")
 
-    args = ["--memray", "--memray-bin-path", str(pytester.path)]
+    args = [*capture_args, "--memray", "--memray-bin-path", str(pytester.path)]
     args.extend(["--memray-bin-prefix", "p"])
     result = pytester.runpytest(*args)
     res = list(pytester.path.iterdir())
@@ -696,7 +1009,9 @@ def test_bin_path_prefix(pytester: Pytester, override: bool) -> None:
     assert bin_path.exists()
 
 
-def test_plugin_works_with_the_flaky_plugin(pytester: Pytester) -> None:
+def test_plugin_works_with_the_flaky_plugin(
+    pytester: Pytester, capture_args: list[str]
+) -> None:
     pytester.makepyfile(
         """
         from flaky import flaky
@@ -708,7 +1023,7 @@ def test_plugin_works_with_the_flaky_plugin(pytester: Pytester) -> None:
     )
 
     with patch("pytest_memray.plugin.Tracker") as mock:
-        result = pytester.runpytest("--memray")
+        result = pytester.runpytest(*capture_args, "--memray")
 
     # Ensure that flaky has only called our Tracker once per retry (2 times)
     # and not more times because it has incorrectly wrapped our plugin and
@@ -823,7 +1138,9 @@ def test_memray_does_not_raise_warnings(pytester: Pytester) -> None:
         (1024 * 10, ExitCode.TESTS_FAILED),
     ],
 )
-def test_leak_marker(pytester: Pytester, size: int, outcome: ExitCode) -> None:
+def test_leak_marker(
+    pytester: Pytester, size: int, outcome: ExitCode, capture_args: list[str]
+) -> None:
     pytester.makepyfile(
         f"""
         import pytest
@@ -837,7 +1154,19 @@ def test_leak_marker(pytester: Pytester, size: int, outcome: ExitCode) -> None:
         """
     )
 
-    result = pytester.runpytest("--memray")
+    with patch("pytest_memray.plugin.Tracker", wraps=Tracker) as tracker:
+        result = pytester.runpytest(*capture_args, "--memray")
+
+    tracker.assert_called_once_with(
+        ANY,
+        native_traces=True,
+        trace_python_allocators=True,
+        file_format=(
+            FileFormat.ALL_ALLOCATIONS
+            if capture_args
+            else FileFormat.AGGREGATED_ALLOCATIONS
+        ),
+    )
 
     assert result.ret == outcome
 
@@ -923,7 +1252,9 @@ def test_leak_marker_does_work_if_memray_not_passed(pytester: Pytester) -> None:
     assert result.ret == ExitCode.TESTS_FAILED
 
 
-def test_multiple_markers_are_not_supported(pytester: Pytester) -> None:
+def test_multiple_markers_are_not_supported(
+    pytester: Pytester, capture_args: list[str]
+) -> None:
     pytester.makepyfile(
         """
         import pytest
@@ -934,7 +1265,7 @@ def test_multiple_markers_are_not_supported(pytester: Pytester) -> None:
         """
     )
 
-    result = pytester.runpytest("--memray")
+    result = pytester.runpytest(*capture_args, "--memray")
     assert result.ret == ExitCode.TESTS_FAILED
 
     output = result.stdout.str()
@@ -1076,7 +1407,9 @@ def test_leaks_in_current_thread(pytester: Pytester) -> None:
     assert result.ret == ExitCode.OK
 
 
-def test_running_async_tests_with_anyio(pytester: Pytester) -> None:
+def test_running_async_tests_with_anyio(
+    pytester: Pytester, capture_args: list[str]
+) -> None:
     xml_output_file = pytester.makefile(".xml", "")
     pytester.makepyfile(
         """
@@ -1097,7 +1430,7 @@ def test_running_async_tests_with_anyio(pytester: Pytester) -> None:
         """
     )
 
-    result = pytester.runpytest("--junit-xml", xml_output_file)
+    result = pytester.runpytest(*capture_args, "--junit-xml", xml_output_file)
 
     assert result.ret != ExitCode.OK
 
